@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const { Worker } = require('worker_threads');
 
@@ -71,4 +71,8 @@ ipcMain.handle('scan:cancel', async () => {
     scanWorker.terminate();
     scanWorker = null;
   }
+});
+
+ipcMain.handle('shell:trashItem', async (_event, filePath) => {
+  await shell.trashItem(filePath);
 });

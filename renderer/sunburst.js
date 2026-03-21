@@ -80,7 +80,7 @@ export function createSunburst(container, data, { onHover, onZoom, onExclude, on
       if (onRemove) {
         options.push({
           icon: '×',
-          label: 'Remove from view',
+          label: 'Move to Trash',
           dangerous: true,
           action: () => onRemove(d)
         });

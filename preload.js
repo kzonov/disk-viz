@@ -9,4 +9,5 @@ contextBridge.exposeInMainWorld('diskViz', {
     ipcRenderer.on('scan:message', handler);
     return () => ipcRenderer.removeListener('scan:message', handler);
   },
+  trashItem: (filePath) => ipcRenderer.invoke('shell:trashItem', filePath),
 });

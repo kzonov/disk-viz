@@ -117,12 +117,14 @@ function renderChart(data) {
         excludes.add(d.data.path);
       }
     },
-    onRemove: (d) => {
-      if (d && d.data && currentData) {
+    onRemove: async (d) => {
+      if (!d || !d.data || !currentData) return;
+      try {
+        await window.diskViz.trashItem(d.data.path);
         const newData = removeNodeFromData(currentData, d.data.path);
-        if (newData) {
-          renderChart(newData);
-        }
+        if (newData) renderChart(newData);
+      } catch (err) {
+        alert(`Could not move to Trash: ${err.message}`);
       }
     },
   });
