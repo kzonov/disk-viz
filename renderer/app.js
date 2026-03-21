@@ -18,10 +18,18 @@ const welcomeEl = document.getElementById('welcome');
 let currentSunburst = null;
 let removeScanListener = null;
 let lastScannedDir = null;
+let currentData = null;
+let originalData = null;
 
 const excludes = createExcludes(excludesEl, {
   onChanged: () => {
-    if (lastScannedDir) startScan(lastScannedDir);
+    if (originalData && excludes.shouldUseInMemoryRecalc()) {
+      // Use in-memory recalculation from original data
+      const newData = applyExclusions(originalData, excludes.getPaths());
+      renderChart(newData);
+    } else if (lastScannedDir) {
+      startScan(lastScannedDir);
+    }
   },
 });
 
@@ -45,6 +53,7 @@ cancelBtn.addEventListener('click', () => {
 
 function startScan(dirPath) {
   lastScannedDir = dirPath;
+  excludes.setInMemoryRecalc(false); // Disable during scan
 
   if (currentSunburst) {
     currentSunburst.destroy();
@@ -63,11 +72,13 @@ function startScan(dirPath) {
     } else if (msg.type === 'complete') {
       hideProgress();
       if (msg.tree) {
+        originalData = msg.tree;
+        excludes.setInMemoryRecalc(true);
         renderChart(msg.tree);
       }
     } else if (msg.type === 'error') {
       hideProgress();
-      chartContainer.innerHTML = `<div class="error-msg">Scan error: ${msg.error}</div>`;
+      chartContainer.innerHTML = `<div class="error-msg">Scan error: ${msg.error.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
     }
   });
 
@@ -97,6 +108,7 @@ function updateProgress(filesScanned, currentPath) {
 }
 
 function renderChart(data) {
+  currentData = data;
   currentSunburst = createSunburst(chartContainer, data, {
     onHover: (d) => details.update(d),
     onZoom: (node) => breadcrumbs.update(node),
@@ -105,5 +117,84 @@ function renderChart(data) {
         excludes.add(d.data.path);
       }
     },
+    onRemove: (d) => {
+      if (d && d.data && currentData) {
+        const newData = removeNodeFromData(currentData, d.data.path);
+        if (newData) {
+          renderChart(newData);
+        }
+      }
+    },
   });
+}
+
+function removeNodeFromData(data, pathToRemove) {
+  // Create a deep copy to avoid modifying original data
+  const copy = JSON.parse(JSON.stringify(data));
+  
+  function removeNode(node, targetPath) {
+    if (node.path === targetPath) {
+      return null; // Mark for removal
+    }
+    
+    if (node.children) {
+      // Filter out removed nodes and update children
+      const filteredChildren = [];
+      let sizeReduction = 0;
+      
+      for (const child of node.children) {
+        if (child.path === targetPath) {
+          sizeReduction += child.size;
+        } else {
+          const result = removeNode(child, targetPath);
+          if (result !== null) {
+            filteredChildren.push(result.node);
+            sizeReduction += result.sizeReduction;
+          } else {
+            sizeReduction += child.size;
+          }
+        }
+      }
+      
+      node.children = filteredChildren;
+      node.size = Math.max(0, node.size - sizeReduction);
+      
+      return { node, sizeReduction };
+    }
+    
+    return { node, sizeReduction: 0 };
+  }
+  
+  const result = removeNode(copy, pathToRemove);
+  return result ? result.node : null;
+}
+
+function applyExclusions(data, excludePaths) {
+  if (!excludePaths || excludePaths.length === 0) return data;
+
+  const excludeSet = new Set(excludePaths);
+  const copy = JSON.parse(JSON.stringify(data));
+
+  function removeNodes(node) {
+    if (!node.children) return { node, sizeReduction: 0 };
+
+    const kept = [];
+    let sizeReduction = 0;
+
+    for (const child of node.children) {
+      if (excludeSet.has(child.path)) {
+        sizeReduction += child.size;
+      } else {
+        const result = removeNodes(child);
+        kept.push(result.node);
+        sizeReduction += result.sizeReduction;
+      }
+    }
+
+    node.children = kept;
+    node.size = Math.max(0, node.size - sizeReduction);
+    return { node, sizeReduction };
+  }
+
+  return removeNodes(copy).node;
 }

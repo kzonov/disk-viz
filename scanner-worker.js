@@ -57,15 +57,10 @@ async function scanDir(dirPath) {
       }
     } else if (entry.isFile()) {
       filesScanned++;
-      try {
-        const stats = await fsp.lstat(fullPath);
-        const size = stats.size;
-        if (size > 0) {
-          children.push({ name: entry.name, path: fullPath, size });
-          dirSize += size;
-        }
-      } catch {
-        // skip inaccessible files
+      const size = lstats.size;
+      if (size > 0) {
+        children.push({ name: entry.name, path: fullPath, size });
+        dirSize += size;
       }
       sendProgress();
     }

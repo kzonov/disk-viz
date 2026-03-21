@@ -1,5 +1,9 @@
 import { formatSize, formatPercent, formatCount } from './format.js';
 
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 export function createDetails(container) {
   const el = document.createElement('div');
   el.className = 'details-panel';
@@ -25,8 +29,8 @@ export function createDetails(container) {
     const fileCount = isDir ? countFiles(d) : null;
 
     el.innerHTML = `
-      <div class="details-name">${d.data.name}</div>
-      <div class="details-path">${d.data.path}</div>
+      <div class="details-name">${escapeHtml(d.data.name)}</div>
+      <div class="details-path">${escapeHtml(d.data.path)}</div>
       <div class="details-row">
         <span class="details-label">Size</span>
         <span class="details-value">${formatSize(d.value)}</span>

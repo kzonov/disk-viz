@@ -1,9 +1,11 @@
 import { nodeColor } from './colors.js';
+import { createContextMenu } from './context-menu.js';
 
 const VISIBLE_DEPTH = 3;
 const TRANSITION_MS = 750;
 
-export function createSunburst(container, data, { onHover, onZoom, onExclude }) {
+export function createSunburst(container, data, { onHover, onZoom, onExclude, onRemove }) {
+  const contextMenu = createContextMenu();
   const svg = d3.select(container).append('svg');
   const g = svg.append('g');
 
@@ -53,7 +55,40 @@ export function createSunburst(container, data, { onHover, onZoom, onExclude }) 
     .on('click', (_event, d) => clicked(d))
     .on('contextmenu', (_event, d) => {
       _event.preventDefault();
-      if (d.children && onExclude) onExclude(d);
+      
+      const options = [];
+      
+      // Only show "Go Inside" for directories with children
+      if (d.children && d.children.length > 0) {
+        options.push({
+          icon: '→',
+          label: 'Go Inside',
+          action: () => clicked(d)
+        });
+      }
+      
+      // Show exclude option for all nodes (files and directories)
+      if (onExclude) {
+        options.push({
+          icon: '⊘',
+          label: 'Exclude from scan',
+          action: () => onExclude(d)
+        });
+      }
+      
+      // Show remove option (for both files and directories)
+      if (onRemove) {
+        options.push({
+          icon: '×',
+          label: 'Remove from view',
+          dangerous: true,
+          action: () => onRemove(d)
+        });
+      }
+      
+      if (options.length > 0) {
+        contextMenu.show(_event.clientX, _event.clientY, options);
+      }
     })
     .on('mouseenter', (_event, d) => {
       d3.select(_event.currentTarget).attr('fill-opacity', 1);
@@ -135,6 +170,9 @@ export function createSunburst(container, data, { onHover, onZoom, onExclude }) 
 
   return {
     zoomTo: clicked,
-    destroy: () => ro.disconnect(),
+    destroy: () => {
+      ro.disconnect();
+      contextMenu.hide();
+    },
   };
 }
