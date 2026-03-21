@@ -1,8 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { nodeColor, categoryLabel } from '../renderer/colors.js';
 
-function makeNode(name, depth = 1, hasChildren = false) {
-  return { data: { name, children: hasChildren ? [] : undefined }, depth };
+// Build a minimal D3-like hierarchy with proper parent links.
+// children is an array of { name, children? } plain objects.
+function makeHierarchy(children) {
+  const root = { data: { name: 'root' }, depth: 0 };
+  root.children = children.map((spec, i) => {
+    const child = { data: { name: spec.name }, depth: 1, parent: root };
+    if (spec.children) {
+      child.children = spec.children.map((grandSpec, j) => {
+        const grand = { data: { name: grandSpec.name }, depth: 2, parent: child };
+        grand.children = [];
+        return grand;
+      });
+    } else {
+      child.children = [];
+    }
+    return child;
+  });
+  return root;
 }
 
 describe('categoryLabel', () => {
@@ -52,20 +68,46 @@ describe('categoryLabel', () => {
 
 describe('nodeColor', () => {
   it('returns an hsl string', () => {
-    const color = nodeColor(makeNode('index.js'));
-    expect(color).toMatch(/^hsl\(\d+, \d+%, \d+%\)$/);
+    const root = makeHierarchy([{ name: 'a' }]);
+    expect(nodeColor(root.children[0])).toMatch(/^hsl\(\d+, \d+%, \d+%\)$/);
   });
 
-  it('returns a color for directories', () => {
-    const color = nodeColor(makeNode('src', 1, true));
-    expect(color).toMatch(/^hsl\(/);
+  it('top-level siblings get distinct hues', () => {
+    const root = makeHierarchy([{ name: 'a' }, { name: 'b' }, { name: 'c' }]);
+    const hues = root.children.map((c) => {
+      const m = nodeColor(c).match(/hsl\((\d+)/);
+      return parseInt(m[1]);
+    });
+    // All three hues should be different
+    expect(new Set(hues).size).toBe(3);
+  });
+
+  it('children share their parent sector hue family', () => {
+    const root = makeHierarchy([
+      { name: 'a', children: [{ name: 'a1' }, { name: 'a2' }] },
+      { name: 'b', children: [{ name: 'b1' }] },
+    ]);
+    const hueOf = (node) => parseInt(nodeColor(node).match(/hsl\((\d+)/)[1]);
+
+    const hueA = hueOf(root.children[0]);
+    const hueB = hueOf(root.children[1]);
+    const hueA1 = hueOf(root.children[0].children[0]);
+    const hueA2 = hueOf(root.children[0].children[1]);
+
+    // a1 and a2 should be closer to hueA than to hueB
+    const distToA = (h) => Math.min(Math.abs(h - hueA), 360 - Math.abs(h - hueA));
+    const distToB = (h) => Math.min(Math.abs(h - hueB), 360 - Math.abs(h - hueB));
+    expect(distToA(hueA1)).toBeLessThan(distToB(hueA1));
+    expect(distToA(hueA2)).toBeLessThan(distToB(hueA2));
   });
 
   it('produces darker colors at greater depth', () => {
-    const shallow = nodeColor(makeNode('file.js', 1));
-    const deep = nodeColor(makeNode('file.js', 5));
-    const shallowL = parseInt(shallow.match(/(\d+)%\)$/)[1]);
-    const deepL = parseInt(deep.match(/(\d+)%\)$/)[1]);
-    expect(deepL).toBeLessThan(shallowL);
+    const root = makeHierarchy([
+      { name: 'a', children: [{ name: 'a1' }] },
+    ]);
+    const lightnessOf = (node) => parseInt(nodeColor(node).match(/(\d+)%\)$/)[1]);
+    const l1 = lightnessOf(root.children[0]);
+    const l2 = lightnessOf(root.children[0].children[0]);
+    expect(l2).toBeLessThan(l1);
   });
 });

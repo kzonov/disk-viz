@@ -1,13 +1,3 @@
-const CATEGORY_COLORS = {
-  code:    { h: 174, s: 60, l: 50 },  // teal
-  media:   { h: 0,   s: 65, l: 55 },  // red
-  docs:    { h: 220, s: 60, l: 55 },  // blue
-  data:    { h: 140, s: 50, l: 45 },  // green
-  archive: { h: 280, s: 50, l: 55 },  // purple
-  system:  { h: 0,   s: 0,  l: 45 },  // gray
-  other:   { h: 40,  s: 40, l: 50 },  // muted gold
-};
-
 const EXT_MAP = {
   // Code
   js: 'code', ts: 'code', jsx: 'code', tsx: 'code', py: 'code', rb: 'code',
@@ -41,20 +31,45 @@ function getCategory(name) {
   return EXT_MAP[ext] || 'other';
 }
 
-export function nodeColor(d) {
-  // Directories: blend based on children or use 'other'
-  const node = d.data || d;
-  const cat = node.children ? 'other' : getCategory(node.name);
-  const base = CATEGORY_COLORS[cat];
-
-  // Vary lightness by depth for visual distinction
-  const depth = d.depth || 0;
-  const l = Math.max(25, base.l - depth * 5);
-  const s = Math.max(15, base.s - depth * 3);
-
-  return `hsl(${base.h}, ${s}%, ${l}%)`;
-}
-
 export function categoryLabel(name) {
   return getCategory(name);
+}
+
+export function nodeColor(d) {
+  if (d.depth === 0) return 'hsl(0, 0%, 20%)';
+
+  // Walk up to the depth-1 ancestor to get the sector's base hue
+  let topLevel = d;
+  while (topLevel.depth > 1) topLevel = topLevel.parent;
+
+  const topSiblings = topLevel.parent.children;
+  const topIndex = topSiblings.indexOf(topLevel);
+  const topTotal = topSiblings.length;
+
+  // Evenly distribute hues around the wheel for top-level sectors.
+  // Each sector owns a band of (360 / topTotal) degrees.
+  const baseHue = (topIndex / topTotal) * 360;
+  const bandwidth = 360 / topTotal;
+
+  // For deeper nodes, drift the hue within the sector's bandwidth
+  // based on each node's position among its siblings.
+  let hueShift = 0;
+  let node = d;
+  while (node.depth > 1) {
+    const siblings = node.parent.children;
+    const idx = siblings.indexOf(node);
+    const count = siblings.length;
+    // Spread across 40% of the bandwidth per level so siblings are
+    // distinguishable but stay clearly within the parent's color family.
+    const spread = bandwidth * 0.4;
+    hueShift += count > 1 ? (idx / (count - 1) - 0.5) * spread : 0;
+    node = node.parent;
+  }
+
+  const hue = ((baseHue + hueShift) % 360 + 360) % 360;
+  const saturation = 72;
+  // Lighten slightly with each level so hierarchy is visible
+  const lightness = Math.max(32, 52 - (d.depth - 1) * 6);
+
+  return `hsl(${Math.round(hue)}, ${saturation}%, ${lightness}%)`;
 }
