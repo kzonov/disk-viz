@@ -40,8 +40,9 @@ async function scanDir(dirPath) {
     if (excludeSet.has(fullPath)) continue;
 
     // Skip symlinks
+    let lstats;
     try {
-      const lstats = await fsp.lstat(fullPath);
+      lstats = await fsp.lstat(fullPath);
       if (lstats.isSymbolicLink()) continue;
     } catch {
       continue;
