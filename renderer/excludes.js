@@ -3,6 +3,7 @@ const STORAGE_KEY = 'disk-viz-excludes';
 export function createExcludes(container, { onChanged }) {
   const el = container;
   let paths = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let useInMemoryRecalc = true;
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(paths));
@@ -62,8 +63,16 @@ export function createExcludes(container, { onChanged }) {
   function getPaths() {
     return [...paths];
   }
+  
+  function shouldUseInMemoryRecalc() {
+    return useInMemoryRecalc;
+  }
+  
+  function setInMemoryRecalc(enabled) {
+    useInMemoryRecalc = enabled;
+  }
 
   render();
 
-  return { add, getPaths, render };
+  return { add, getPaths, render, shouldUseInMemoryRecalc, setInMemoryRecalc };
 }

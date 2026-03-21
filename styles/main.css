@@ -294,6 +294,60 @@ body {
   color: #e05050;
 }
 
+/* Context Menu */
+.context-menu {
+  position: fixed;
+  background: rgba(22, 33, 62, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 0;
+  min-width: 180px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.context-menu.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.context-menu-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.context-menu-item.dangerous {
+  color: #e05050;
+}
+
+.context-menu-item.dangerous:hover {
+  background: rgba(224, 80, 80, 0.1);
+}
+
+.context-menu-icon {
+  font-size: 12px;
+  width: 12px;
+  text-align: center;
+}
+
 /* Error */
 .error-msg {
   color: #e05050;

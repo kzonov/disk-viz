@@ -3,6 +3,7 @@ import { createBreadcrumbs } from './breadcrumbs.js';
 import { createDetails } from './details.js';
 import { createExcludes } from './excludes.js';
 import { formatCount } from './format.js';
+import { removeNodeFromData, applyExclusions } from './tree.js';
 
 const chooseBtn = document.getElementById('choose-btn');
 const cancelBtn = document.getElementById('cancel-btn');
@@ -135,73 +136,3 @@ function renderChart(data) {
   });
 }
 
-function removeNodeFromData(data, pathToRemove) {
-  // Create a deep copy to avoid modifying original data
-  const copy = JSON.parse(JSON.stringify(data));
-  
-  function removeNode(node, targetPath) {
-    if (node.path === targetPath) {
-      return null; // Mark for removal
-    }
-    
-    if (node.children) {
-      // Filter out removed nodes and update children
-      const filteredChildren = [];
-      let sizeReduction = 0;
-      
-      for (const child of node.children) {
-        if (child.path === targetPath) {
-          sizeReduction += child.size;
-        } else {
-          const result = removeNode(child, targetPath);
-          if (result !== null) {
-            filteredChildren.push(result.node);
-            sizeReduction += result.sizeReduction;
-          } else {
-            sizeReduction += child.size;
-          }
-        }
-      }
-      
-      node.children = filteredChildren;
-      node.size = Math.max(0, node.size - sizeReduction);
-      
-      return { node, sizeReduction };
-    }
-    
-    return { node, sizeReduction: 0 };
-  }
-  
-  const result = removeNode(copy, pathToRemove);
-  return result ? result.node : null;
-}
-
-function applyExclusions(data, excludePaths) {
-  if (!excludePaths || excludePaths.length === 0) return data;
-
-  const excludeSet = new Set(excludePaths);
-  const copy = JSON.parse(JSON.stringify(data));
-
-  function removeNodes(node) {
-    if (!node.children) return { node, sizeReduction: 0 };
-
-    const kept = [];
-    let sizeReduction = 0;
-
-    for (const child of node.children) {
-      if (excludeSet.has(child.path)) {
-        sizeReduction += child.size;
-      } else {
-        const result = removeNodes(child);
-        kept.push(result.node);
-        sizeReduction += result.sizeReduction;
-      }
-    }
-
-    node.children = kept;
-    node.size = Math.max(0, node.size - sizeReduction);
-    return { node, sizeReduction };
-  }
-
-  return removeNodes(copy).node;
-}
