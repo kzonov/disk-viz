@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disk Viz</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="toolbar">
+    <button id="choose-btn">Choose Directory</button>
+    <button id="cancel-btn">Cancel</button>
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="progress-text" id="progress-text"></span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="content">
+      <div id="breadcrumbs"></div>
+      <div id="chart">
+        <div class="welcome" id="welcome">
+          <div class="welcome-icon">📁</div>
+          <div class="welcome-text">Choose a directory to visualize disk usage</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+      <div id="excludes"></div>
+    </div>
+  </div>
+
+  <script src="./node_modules/d3/dist/d3.min.js"></script>
+  <script type="module" src="renderer/app.js"></script>
+</body>
+</html>
