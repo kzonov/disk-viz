@@ -108,6 +108,11 @@ function updateProgress(filesScanned, currentPath) {
 }
 
 function renderChart(data) {
+  if (currentSunburst) {
+    currentSunburst.destroy();
+    currentSunburst = null;
+  }
+  chartContainer.innerHTML = '';
   currentData = data;
   currentSunburst = createSunburst(chartContainer, data, {
     onHover: (d) => details.update(d),
