@@ -4,10 +4,29 @@
   "description": "macOS Disk Usage Visualizer",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --mac"
+  },
+  "build": {
+    "appId": "com.kzonov.disk-viz",
+    "productName": "Disk Viz",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "scanner-worker.js",
+      "index.html",
+      "styles/**",
+      "renderer/**",
+      "node_modules/d3/**"
+    ]
   },
   "devDependencies": {
-    "electron": "^33.0.0"
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
   },
   "dependencies": {
     "d3": "^7.9.0"
