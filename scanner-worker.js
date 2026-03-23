@@ -23,7 +23,7 @@ function sendProgress(currentPath) {
         sendProgress(currentPath);
       },
     });
-    parentPort.postMessage({ type: 'complete', tree });
+    parentPort.postMessage({ type: 'complete', tree: JSON.stringify(tree) });
   } catch (err) {
     parentPort.postMessage({ type: 'error', error: err.message });
   }

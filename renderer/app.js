@@ -73,9 +73,10 @@ function startScan(dirPath) {
     } else if (msg.type === 'complete') {
       hideProgress();
       if (msg.tree) {
-        originalData = msg.tree;
+        const tree = JSON.parse(msg.tree);
+        originalData = tree;
         excludes.setInMemoryRecalc(true);
-        renderChart(msg.tree);
+        renderChart(tree);
       }
     } else if (msg.type === 'error') {
       hideProgress();
