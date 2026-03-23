@@ -109,8 +109,9 @@ describe('scanDir', () => {
     }
   });
 
-  it('propagates errors other than EACCES/EPERM', async () => {
-    await expect(scanDir('/nonexistent-disk-viz-test')).rejects.toThrow();
+  it('returns null for any unreadable directory', async () => {
+    const result = await scanDir('/nonexistent-disk-viz-test');
+    expect(result).toBeNull();
   });
 
   it('calls onProgress for each directory visited', async () => {
