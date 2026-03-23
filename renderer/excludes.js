@@ -13,7 +13,10 @@ export function createExcludes(container, { onChanged }) {
     el.innerHTML = `
       <div class="excludes-header">
         <span class="excludes-title">Excluded Paths</span>
-        <button class="excludes-add-btn" id="excludes-add">+</button>
+        <button class="excludes-add-btn" id="excludes-add" title="Pick folder…">+</button>
+      </div>
+      <div class="excludes-input-row">
+        <input class="excludes-input" id="excludes-input" type="text" placeholder="Paste or type a path…" spellcheck="false" />
       </div>
       <div class="excludes-list" id="excludes-list"></div>
     `;
@@ -43,6 +46,17 @@ export function createExcludes(container, { onChanged }) {
       const dirPath = await window.diskViz.openDirectory();
       if (dirPath) add(dirPath);
     });
+
+    const input = el.querySelector('#excludes-input');
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const val = input.value.trim();
+        if (val) {
+          add(val);
+          input.value = '';
+        }
+      }
+    });
   }
 
   function add(p) {
@@ -63,11 +77,11 @@ export function createExcludes(container, { onChanged }) {
   function getPaths() {
     return [...paths];
   }
-  
+
   function shouldUseInMemoryRecalc() {
     return useInMemoryRecalc;
   }
-  
+
   function setInMemoryRecalc(enabled) {
     useInMemoryRecalc = enabled;
   }

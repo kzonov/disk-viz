@@ -76,3 +76,7 @@ ipcMain.handle('scan:cancel', async () => {
 ipcMain.handle('shell:trashItem', async (_event, filePath) => {
   await shell.trashItem(filePath);
 });
+
+ipcMain.handle('shell:openInFinder', async (_event, filePath) => {
+  shell.showItemInFolder(filePath);
+});

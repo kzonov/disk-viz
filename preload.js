@@ -10,4 +10,5 @@ contextBridge.exposeInMainWorld('diskViz', {
     return () => ipcRenderer.removeListener('scan:message', handler);
   },
   trashItem: (filePath) => ipcRenderer.invoke('shell:trashItem', filePath),
+  openInFinder: (filePath) => ipcRenderer.invoke('shell:openInFinder', filePath),
 });

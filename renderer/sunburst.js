@@ -57,38 +57,53 @@ export function createSunburst(container, data, { onHover, onZoom, onExclude, on
       _event.preventDefault();
       
       const options = [];
-      
+      const path = d.data.path;
+
       // Only show "Go Inside" for directories with children
       if (d.children && d.children.length > 0) {
         options.push({
           icon: '→',
           label: 'Go Inside',
-          action: () => clicked(d)
+          action: () => clicked(d),
         });
       }
-      
+
+      // Open in Finder — directories only
+      if (d.children) {
+        options.push({
+          icon: '◉',
+          label: 'Open in Finder',
+          action: () => window.diskViz.openInFinder(path),
+        });
+      }
+
+      // Copy path — all nodes
+      options.push({
+        icon: '⎘',
+        label: 'Copy Path',
+        action: () => navigator.clipboard.writeText(path),
+      });
+
       // Show exclude option for all nodes (files and directories)
       if (onExclude) {
         options.push({
           icon: '⊘',
           label: 'Exclude from scan',
-          action: () => onExclude(d)
+          action: () => onExclude(d),
         });
       }
-      
+
       // Show remove option (for both files and directories)
       if (onRemove) {
         options.push({
           icon: '×',
           label: 'Move to Trash',
           dangerous: true,
-          action: () => onRemove(d)
+          action: () => onRemove(d),
         });
       }
-      
-      if (options.length > 0) {
-        contextMenu.show(_event.clientX, _event.clientY, options);
-      }
+
+      contextMenu.show(_event.clientX, _event.clientY, options);
     })
     .on('mouseenter', (_event, d) => {
       d3.select(_event.currentTarget).attr('fill-opacity', 1);

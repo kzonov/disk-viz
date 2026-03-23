@@ -252,6 +252,31 @@ body {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.excludes-input-row {
+  margin-bottom: 8px;
+}
+
+.excludes-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: #e0e0e0;
+  font-size: 11px;
+  padding: 5px 8px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.excludes-input::placeholder {
+  color: #4a4a60;
+}
+
+.excludes-input:focus {
+  border-color: rgba(83, 144, 217, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .excludes-list {
   margin-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
