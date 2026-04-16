@@ -39,3 +39,7 @@ Click **Choose Directory** and pick a folder to scan.
 - Breadcrumb navigation
 - Exclude paths from the scan
 - Background scanning with progress indicator
+
+## License
+
+MIT — see [LICENSE](LICENSE).

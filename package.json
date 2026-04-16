@@ -2,6 +2,7 @@
   "name": "disk-viz",
   "version": "1.0.0",
   "description": "macOS Disk Usage Visualizer",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
