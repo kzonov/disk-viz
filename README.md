@@ -2,6 +2,8 @@
 
 A macOS desktop app for visualizing disk usage as an interactive sunburst chart. Built with Electron and D3.js.
 
+![Disk Viz screenshot](docs/screenshot.png)
+
 ## Install
 
 Download the latest `.dmg` from [Releases](https://github.com/kzonov/disk-viz/releases), open it, and drag **Disk Viz** to Applications.
