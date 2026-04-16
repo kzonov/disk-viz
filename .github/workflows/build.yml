@@ -21,6 +21,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Sync package.json version with tag
+        run: npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
+
       - run: npm run build -- --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
