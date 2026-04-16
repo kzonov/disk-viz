@@ -6,11 +6,7 @@ A macOS desktop app for visualizing disk usage as an interactive sunburst chart.
 
 Download the latest `.dmg` from [Releases](https://github.com/kzonov/disk-viz/releases), open it, and drag **Disk Viz** to Applications.
 
-Since the app is not code-signed, macOS may block it. Run this once after installing:
-
-```bash
-xattr -cr /Applications/Disk\ Viz.app
-```
+The app is ad-hoc signed but not notarized with Apple, so the first launch will show an "unidentified developer" warning. Right-click the app in Applications and choose **Open** once — after that it launches normally.
 
 ## Development
 

@@ -12,9 +12,11 @@
   "build": {
     "appId": "com.kzonov.disk-viz",
     "productName": "Disk Viz",
+    "afterSign": "scripts/after-sign.js",
     "mac": {
       "category": "public.app-category.utilities",
-      "target": "dmg"
+      "target": "dmg",
+      "identity": null
     },
     "files": [
       "main.js",
