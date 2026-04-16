@@ -5,9 +5,11 @@ All notable changes to Disk Viz are documented here. Format follows [Keep a Chan
 ## [Unreleased]
 
 ### Added
+- App icon / logo (shown in the Dock, Applications, and at the top of the README).
 - MIT license.
 - Screenshot in the README.
 - Contributing section in the README.
+- `CHANGELOG.md`.
 
 ### Changed
 - README install section documents both the GUI "Open Anyway" path and the `xattr -cr` shortcut for first-launch unblocking.
