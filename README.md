@@ -40,6 +40,16 @@ Click **Choose Directory** and pick a folder to scan.
 - Exclude paths from the scan
 - Background scanning with progress indicator
 
+## Contributing
+
+Bug reports, feature suggestions, and PRs are welcome.
+
+- **Issues**: please include macOS version, what you tried, and the behavior you saw vs. expected. Scanner issues benefit from the directory layout that triggered them.
+- **Pull requests**: fork the repo, branch off `main`, and open a PR. Keep changes focused — one topic per PR. Run `npm test` before submitting.
+- **Dev setup**: see [Development](#development) above.
+
+No formal style guide — match the existing code (plain JS, no TypeScript, no linter) and keep dependencies minimal.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
