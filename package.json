@@ -21,6 +21,7 @@
       "preload.js",
       "scanner-worker.js",
       "index.html",
+      "lib/**",
       "styles/**",
       "renderer/**",
       "node_modules/d3/**"
