@@ -50,6 +50,10 @@ Bug reports, feature suggestions, and PRs are welcome.
 
 No formal style guide — match the existing code (plain JS, no TypeScript, no linter) and keep dependencies minimal.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
