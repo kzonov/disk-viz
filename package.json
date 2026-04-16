@@ -25,9 +25,11 @@
       "preload.js",
       "scanner-worker.js",
       "index.html",
+      "about.html",
       "lib/**",
       "styles/**",
       "renderer/**",
+      "docs/icon.png",
       "node_modules/d3/**"
     ]
   },

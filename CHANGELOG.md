@@ -5,6 +5,8 @@ All notable changes to Disk Viz are documented here. Format follows [Keep a Chan
 ## [Unreleased]
 
 ### Added
+- About window (app menu → About Disk Viz) with version, links to the GitHub repo, MIT license, and zonov.me.
+- Help → GitHub Repository menu item.
 - App icon / logo (shown in the Dock, Applications, and at the top of the README).
 - MIT license.
 - Screenshot in the README.
