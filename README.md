@@ -1,9 +1,5 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I2DEDW)
 
-<p align="center">
-  <img src="docs/icon.png" alt="Disk Viz logo" width="160" />
-</p>
-
 # Disk Viz
 
 A macOS desktop app for visualizing disk usage as an interactive sunburst chart. Built with Electron and D3.js.
