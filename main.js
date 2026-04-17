@@ -5,6 +5,14 @@ const { Worker } = require('worker_threads');
 let mainWindow;
 let aboutWindow = null;
 let scanWorker = null;
+let lastScanRoot = null;
+
+function isWithinScanRoot(p) {
+  if (!lastScanRoot || typeof p !== 'string' || p.length === 0) return false;
+  const resolved = path.resolve(p);
+  const root = path.resolve(lastScanRoot);
+  return resolved === root || resolved.startsWith(root + path.sep);
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -111,13 +119,19 @@ ipcMain.handle('dialog:openDirectory', async () => {
 });
 
 ipcMain.handle('scan:start', async (event, dirPath, excludePaths) => {
+  if (typeof dirPath !== 'string' || dirPath.length === 0) {
+    throw new Error('Invalid scan path');
+  }
+
   if (scanWorker) {
     scanWorker.terminate();
     scanWorker = null;
   }
 
+  lastScanRoot = path.resolve(dirPath);
+
   scanWorker = new Worker(path.join(__dirname, 'scanner-worker.js'), {
-    workerData: { dirPath, excludePaths: excludePaths || [] },
+    workerData: { dirPath: lastScanRoot, excludePaths: excludePaths || [] },
   });
 
   scanWorker.on('message', (msg) => {
@@ -149,9 +163,15 @@ ipcMain.handle('scan:cancel', async () => {
 });
 
 ipcMain.handle('shell:trashItem', async (_event, filePath) => {
-  await shell.trashItem(filePath);
+  if (!isWithinScanRoot(filePath)) {
+    throw new Error('Path is outside the active scan root');
+  }
+  await shell.trashItem(path.resolve(filePath));
 });
 
 ipcMain.handle('shell:openInFinder', async (_event, filePath) => {
-  shell.showItemInFolder(filePath);
+  if (!isWithinScanRoot(filePath)) {
+    throw new Error('Path is outside the active scan root');
+  }
+  shell.showItemInFolder(path.resolve(filePath));
 });

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self';">
   <title>About Disk Viz</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -74,9 +75,6 @@
     <a href="https://zonov.me">zonov.me</a>
   </div>
   <div class="copyright">© 2026 Kirill Zonov</div>
-  <script>
-    const v = new URLSearchParams(location.search).get('v');
-    document.getElementById('version').textContent = v ? 'Version ' + v : '';
-  </script>
+  <script src="renderer/about.js"></script>
 </body>
 </html>
