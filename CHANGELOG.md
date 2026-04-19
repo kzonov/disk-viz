@@ -4,6 +4,13 @@ All notable changes to Disk Viz are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [1.2.1] — 2026-04-19
+
+### Security
+- Added a strict Content-Security-Policy to `index.html` and `about.html` (script-src `'self'`, no inline scripts), moving the inline About-window script to `renderer/about.js`.
+- `shell:trashItem` and `shell:openInFinder` now reject paths outside the active scan root, so a compromised renderer can't ask main to trash or reveal arbitrary files.
+- Upgraded Electron from `^33` to `^41` (current supported line) and `electron-builder` to `^26.8.1`. `npm audit` is clean.
+
 ### Added
 - About window (app menu → About Disk Viz) with version, links to the GitHub repo, MIT license, and zonov.me.
 - Help → GitHub Repository menu item.
@@ -11,6 +18,7 @@ All notable changes to Disk Viz are documented here. Format follows [Keep a Chan
 - MIT license.
 - Screenshot in the README.
 - Contributing section in the README.
+- Ko-fi support button in the README.
 - `CHANGELOG.md`.
 
 ### Changed
@@ -55,7 +63,8 @@ Initial release.
 - Background scanning with progress indicator.
 - `electron-builder` config and GitHub Actions workflow producing a macOS `.dmg` on tag push.
 
-[Unreleased]: https://github.com/kzonov/disk-viz/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/kzonov/disk-viz/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/kzonov/disk-viz/compare/v1.1.2...v1.2.1
 [1.1.2]: https://github.com/kzonov/disk-viz/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/kzonov/disk-viz/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/kzonov/disk-viz/compare/v1.0.0...v1.1.0
